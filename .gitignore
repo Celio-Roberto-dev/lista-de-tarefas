@@ -12,4 +12,4 @@ node_modules/
 .env.production.local
 
 # Prisma gerado
-/generated/prisma
+/generated/prisma/
