@@ -32,15 +32,7 @@ const LoginPage = () => {
 
     setIsSubmitting(true)
 
-    try {
-      await loginAction({ email, password, remember })
-      // se chegou aqui o redirect vai acontecer
-      toast.success("Login realizado com sucesso!")
-    } catch {
-      toast.error("Erro ao realizar login.")
-    } finally {
-      setIsSubmitting(false)
-    }
+    await loginAction({ email, password, remember })
   }
 
   return (

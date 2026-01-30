@@ -8,8 +8,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Credentials({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email   : { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        remember: { label: "Remember", type: "checkbox"}
       },
 
       async authorize(credentials) {
@@ -30,11 +31,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!isValid) return null
 
         return {
-          id: String(user.id),
-          name: user.name,
-          email: user.email,
+          id       : String(user.id),
+          name     : user.name,
+          email    : user.email,
+          remember : credentials.remember === "true"
         }
       },
+      
     }),
   ],
 
@@ -51,6 +54,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Executa apenas no momento do login
       if (user) {
         token.id = user.id
+        token.remember = (user as any).remember
         // se veio "remember", sessão longa (7 dias)
         // senão, curta (1 dia)
         token.exp = Math.floor(

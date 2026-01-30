@@ -9,10 +9,10 @@ type LoginInput = {
 }
 
 export const loginAction = async ({ email, password, remember }: LoginInput) => {
-  return await signIn("credentials", {
+  await signIn("credentials", {
     email,
     password,
-    callbackUrl: "/dashboard/tasks", // PRA ONDE IR
+    redirectTo: "/dashboard/tasks", // PRA ONDE IR
     remember
   })
 }
