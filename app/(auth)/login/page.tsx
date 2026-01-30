@@ -33,15 +33,9 @@ const LoginPage = () => {
     setIsSubmitting(true)
 
     try {
-      const result = await loginAction({ email, password, remember })
-
-      if (result?.error) {
-        toast.error("E-mail ou senha inválidos.")
-        return
-      }
-
+      await loginAction({ email, password, remember })
+      // se chegou aqui o redirect vai acontecer
       toast.success("Login realizado com sucesso!")
-      router.push("/dashboard/tasks")
     } catch {
       toast.error("Erro ao realizar login.")
     } finally {
