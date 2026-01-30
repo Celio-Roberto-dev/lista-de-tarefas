@@ -75,12 +75,12 @@ const LoginPage = () => {
                 <span className="text-muted-foreground">Lembrar-me</span>
               </label>
 
-              <Link
+              {/* <Link
                 href="/forgot-password"
                 className="text-primary hover:underline font-medium"
               >
                 Esqueceu a senha?
-              </Link>
+              </Link> */}
             </div>
 
             <div>
