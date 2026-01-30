@@ -9,16 +9,10 @@ type LoginInput = {
 }
 
 export const loginAction = async ({ email, password, remember }: LoginInput) => {
-  try {
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      remember
-    })
-
-    return result
-  } catch {
-    return { error: "Erro ao autenticar" }
-  }
+  return await signIn("credentials", {
+    email,
+    password,
+    callbackUrl: "/tasks", // PRA ONDE IR
+    remember
+  })
 }
