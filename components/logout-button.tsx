@@ -2,10 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export const LogoutButton = () => {
+  const router = useRouter()
+
   const handleLogout = async () => {
-    await signOut({ redirect: true, callbackUrl: "/login" })
+    await signOut({ redirect: false })
+    router.push("/login")
   }
 
   return (
