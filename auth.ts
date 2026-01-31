@@ -1,65 +1,50 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { prisma } from "@/lib/prisma"
-import * as bcrypt from "bcryptjs"
+import { findUserByCredentials } from "./lib/user"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
-      name: "credentials",
       credentials: {
-        email   : { label: "Email", type: "email" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
-        remember: { label: "Remember", type: "checkbox"}
       },
 
-      async authorize(credentials) {
+      authorize: async (credentials) => {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
 
-        const email = String(credentials.email)
-        const password = String(credentials.password)
+        const user = await findUserByCredentials(
+          credentials.email as string,
+          credentials.password as string
+        )
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        })
+        if (!user) {
+          return null
+        }
 
-        if (!user) return null
-
-        const isValid = await bcrypt.compare(password, user.password)
-        if (!isValid) return null
-
+        // NextAuth exige que o id seja STRING aqui
         return {
-          id       : String(user.id),
-          name     : user.name,
-          email    : user.email,
-          remember : credentials.remember === "true"
+          id: String(user.id),
+          name: user.name,
+          email: user.email,
         }
       },
-      
     }),
   ],
-
-  pages: {
-    signIn: "/login",
-  },
 
   session: {
     strategy: "jwt",
   },
 
   callbacks: {
-    async jwt({ token, user, account }) {
-      // Executa apenas no momento do login
+    async jwt({ token, user }) {
+      // Primeiro login
       if (user) {
         token.id = user.id
-        token.remember = (user as any).remember
-        // se veio "remember", sessão longa (7 dias)
-        // senão, curta (1 dia)
-        token.exp = Math.floor(
-          Date.now() / 1000 + (token.remember ? 60 * 60 * 24 * 7 : 60 * 60 * 24)
-        )
+        token.name = user.name
+        token.email = user.email
       }
 
       return token
@@ -67,7 +52,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
+        session.user.id = String(token.id)
       }
 
       return session

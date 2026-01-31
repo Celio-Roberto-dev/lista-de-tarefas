@@ -50,7 +50,9 @@ export const getTasks = async (): Promise<TaskWithUser[]> => {
   const session = await auth()
 
   if (!session?.user?.id) {
-    redirect("/login")
+    throw new Error("Unauthorized")
+    console.log("o erro está aqui chatgpt")
+    /* redirect("/login") */
   }
 
   return prisma.task.findMany({

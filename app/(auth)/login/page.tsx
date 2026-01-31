@@ -12,7 +12,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { loginAction } from "@/actions/login"
+import { loginAction } from "@/actions/login-action"
 
 const LoginPage = () => {
   const [email, setEmail] = useState("")
@@ -23,17 +23,24 @@ const LoginPage = () => {
   const router = useRouter()
 
   const handleSubmitLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  e.preventDefault()
 
-    if (!email || !password) {
-      toast.error("Preencha todos os campos.")
-      return
-    }
-
-    setIsSubmitting(true)
-
-    await loginAction({ email, password, remember })
+  if (!email || !password) {
+    toast.error("Preencha todos os campos.")
+    return
   }
+
+  setIsSubmitting(true)
+
+  const result = await loginAction({ email, password })
+
+  if (result.success) {
+    router.push("/dashboard/tasks")
+  } else {
+    toast.error(result.error ?? "Erro ao fazer login")
+    setIsSubmitting(false)
+  }
+}
 
   return (
     <>
