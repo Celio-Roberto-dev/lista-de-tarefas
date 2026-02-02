@@ -13,6 +13,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { loginAction } from "@/actions/login-action"
+import { PasswordInput } from "@/components/password-input"
 
 const LoginPage = () => {
   const [email, setEmail] = useState("")
@@ -63,11 +64,12 @@ const LoginPage = () => {
 
             <div>
               <Label>Senha</Label>
-              <Input
-                type="password"
+              <PasswordInput
                 placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                required
               />
             </div>
 
