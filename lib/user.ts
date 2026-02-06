@@ -17,13 +17,13 @@ export async function findUserByCredentials(email: string, password: string): Pr
         return null
     }
 
-    console.log("📧 EMAIL:", email)
-    console.log("🔑 SENHA DIGITADA:", password)
-    console.log("🧱 HASH NO BANCO:", user.password)
+    // console.log("EMAIL:", email)
+    // console.log("SENHA DIGITADA:", password)
+    // console.log("HASH NO BANCO:", user.password)
 
     const passwordMatch = await bcrypt.compare(password, user.password)
 
-    console.log("✅ PASSWORD MATCH:", passwordMatch)
+    // console.log("PASSWORD MATCH:", passwordMatch)
 
     if(passwordMatch) {
         return {id: String(user.id), name: user.name, email: user.email} //user

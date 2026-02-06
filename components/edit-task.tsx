@@ -3,6 +3,7 @@
 import { SquarePen } from "lucide-react"
 import { Button } from "./ui/button"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { Input } from "./ui/input"
 import { Task } from "@/generated/prisma/client"
 import { useState } from "react"
@@ -36,29 +37,38 @@ const EditTask = ({ task, handleGetTasks }: TaskProps) => {
       return
     }
     try {
-    // 3. Atualiza a tarefa no backend via Server Action
-    await updateTask({
-      taskId: task.id,
-      taskTitle: editedTask,
-    })
+      // 3. Atualiza a tarefa no backend via Server Action
+      await updateTask({
+        taskId: task.id,
+        taskTitle: editedTask,
+      })
 
-    // 4. Pede ao componente pai para recarregar as tarefas
-    handleGetTasks()
+      // 4. Pede ao componente pai para recarregar as tarefas
+      handleGetTasks()
 
-    // 5. Feedback visual ao usuário
-    toast.success(`Tarefa ${editedTask} alterada com sucesso!`)
+      // 5. Feedback visual ao usuário
+      toast.success(`Tarefa ${editedTask} alterada com sucesso!`)
     } catch (error) {
-    console.error("Erro ao atualizar tarefa:", error)
-    toast.error("Não foi possível salvar a alteração. Tente novamente.")
+      console.error("Erro ao atualizar tarefa:", error)
+      toast.error("Não foi possível salvar a alteração. Tente novamente.")
+    }
   }
-}
 
   return (
     <Dialog>
-      {/* Ícone que abre o modal */}
-      <DialogTrigger asChild>
-        <SquarePen size={16} className="cursor-pointer" />
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {/* Botão que abre o modal */}
+          <DialogTrigger asChild>
+            <Button variant="outline" size="icon-sm" className="cursor-pointer">
+              <SquarePen />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <span>Editar tarefa</span>
+        </TooltipContent>
+      </Tooltip>
 
       {/* Conteúdo do modal */}
       <DialogContent>
@@ -75,9 +85,9 @@ const EditTask = ({ task, handleGetTasks }: TaskProps) => {
 
           {/* Botão que dispara a edição */}
           <DialogClose asChild>
-          <Button className="cursor-pointer" onClick={handleEditTask}>
-            Gravar
-          </Button>
+            <Button className="cursor-pointer" onClick={handleEditTask}>
+              Gravar
+            </Button>
           </DialogClose>
         </div>
       </DialogContent>

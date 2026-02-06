@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import {
   Plus,
   Trash,
@@ -162,13 +163,17 @@ const TaskPage = () => {
             onClick={handleCreateTask}
             disabled={loading}
           >
-            {loading ? (<LoaderCircle className="animate-spin" />) : (<Plus />)}
+            {loading ? <LoaderCircle className="animate-spin" /> : <Plus />}
             {loading ? "Gravando..." : "Gravar"}
           </Button>
         </CardHeader>
         <CardContent>
           <Separator className="mb-4" />
-          <Filter currentFilter={currentFilter} setCurrentFilter={setCurrentFilter} taskCompletedCount={taskCompletedCount} />
+          <Filter
+            currentFilter={currentFilter}
+            setCurrentFilter={setCurrentFilter}
+            taskCompletedCount={taskCompletedCount}
+          />
 
           <div className="mt-4 border-t border-b divide-y">
             {/* Cabeçalho do grid */}
@@ -176,14 +181,20 @@ const TaskPage = () => {
               <div className="w-1 h-full" />
               <div className="flex-1 px-2 text-sm font-medium">Tarefa</div>
               <div className="flex-1 px-2 text-sm font-medium">Responsável</div>
-              <div className="flex-1 px-2 text-sm font-medium">Data da tarefa</div>
-              <div className="w-16 px-2 text-sm font-medium text-right">Ações</div>
+              <div className="flex-1 px-2 text-sm font-medium">
+                Data da tarefa
+              </div>
+              <div className="w-16 px-2 text-sm font-medium text-right">
+                Ações
+              </div>
             </div>
             {/* Só renderiza este parágrafo quando a lista estiver vazia
                 Em JSX, o operador && funciona assim:
                 Se a condição for true, renderiza o que vem depois
                 Se for false, não renderiza nada */}
-            {filteredTasks.length === 0 && <p className="text-xs py-4">Não existem tarefas cadastradas!</p>}
+            {filteredTasks.length === 0 && (
+              <p className="text-xs py-4">Não existem tarefas cadastradas!</p>
+            )}
             {filteredTasks.map((task) => (
               <div
                 className="h-14 flex justify-between items-center"
@@ -214,17 +225,28 @@ const TaskPage = () => {
                     handleToggleTaskOptimistic(task.id, task.completed)
                   }
                 >
-                  { new Date(task.createdAt).toLocaleString("pt-BR")} 
+                  {new Date(task.createdAt).toLocaleString("pt-BR")}
                   {/* {new Date(task.createdAt).toLocaleDateString("pt-BR")} */}
                 </p>
 
                 <div className="flex gap-2 items-center">
                   <EditTask task={task} handleGetTasks={handleGetTasks} />
-                  <Trash
-                    size={16}
-                    className="cursor-pointer"
-                    onClick={() => handleDeleteTask(task.id)}
-                  />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size={"icon-sm"}
+                        className="cursor-pointer"
+                        onClick={() => handleDeleteTask(task.id)}
+                      >
+                        <Trash />
+                      </Button>
+                    </TooltipTrigger>
+
+                    <TooltipContent side="top">
+                      <span>Excluir tarefa</span>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             ))}
@@ -236,35 +258,48 @@ const TaskPage = () => {
             <div className="flex justify-between items-center w-full">
               <div className="flex gap-2 items-center">
                 <ListCheck size={18} />
-                <p className="text-xs">Tarefas concluídas ({taskCompletedCount}/{taskList.length})</p>
+                <p className="text-xs">
+                  Tarefas concluídas ({taskCompletedCount}/{taskList.length})
+                </p>
               </div>
               {taskCompletedCount > 0 && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    className="text-xs h-7 cursor-pointer"
-                    variant="outline"
-                  >
-                    <Trash />
-                    Limpar tarefas concluídas
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Tem certeza que deseja excluir <strong>{taskCompletedCount}</strong> {taskCompletedCount === 1 ? "tarefa concluída?" : "tarefas concluídas?"}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não pode ser desfeita. Isso excluirá
-                      permanentemente as tarefas concluídas.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
-                    <AlertDialogAction className="cursor-pointer" onClick={handleDeleteTaskCompleted}>Continuar</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      className="text-xs h-7 cursor-pointer"
+                      variant="outline"
+                    >
+                      <Trash />
+                      Limpar tarefas concluídas
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Tem certeza que deseja excluir{" "}
+                        <strong>{taskCompletedCount}</strong>{" "}
+                        {taskCompletedCount === 1
+                          ? "tarefa concluída?"
+                          : "tarefas concluídas?"}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente as tarefas concluídas.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="cursor-pointer">
+                        Cancelar
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        className="cursor-pointer"
+                        onClick={handleDeleteTaskCompleted}
+                      >
+                        Continuar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
             </div>
 
@@ -272,7 +307,9 @@ const TaskPage = () => {
             <div className="h-2 w-full bg-gray-100 rounded-md">
               <div
                 className="h-full bg-blue-500 rounded-md"
-                style={{ width: `${(taskList.length === 0 ? 0 : taskCompletedCount / taskList.length) * 100}%` }}
+                style={{
+                  width: `${(taskList.length === 0 ? 0 : taskCompletedCount / taskList.length) * 100}%`,
+                }}
               ></div>
             </div>
             {/* Total da barra de progresso */}
